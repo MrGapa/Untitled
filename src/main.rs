@@ -17,7 +17,7 @@ fn main() {
     let (mut rl, thread) = raylib::init()
     .size(W_WIDTH, W_HEIGHT)
     .title("Untitled")
-    .msaa_4x()
+    //.msaa_4x()
     .build();
     
     let mut animation_time = 0.0;
@@ -30,7 +30,7 @@ fn main() {
         12.0, 
         8.0,
         6.0,
-        MOVEMENT_FORCE * 100.0
+        MOVEMENT_FORCE
     );
 
     rl.set_target_fps(FPS);
@@ -52,7 +52,14 @@ fn main() {
         let mut d = rl.begin_drawing(&thread);
 
         d.clear_background(Color::VIOLET);
-        d.draw_text("Hi", W_WIDTH / 2, W_HEIGHT / 2, 20, Color::BLACK);
-        d.draw_texture_rec(&player.sprite, player.animation.rec, player.pos, Color::WHITE);
+
+        d.draw_texture_pro(
+            &player.sprite, 
+            Rectangle::new(player.animation.rec.x,player.animation.rec.y, player.player_direction * player.animation.rec.width, player.animation.rec.height), 
+            Rectangle::new(player.pos.x, player.pos.y,  1.5 * player.animation.rec.width, 1.5 * player.animation.rec.height),
+            Vector2::new(0.0,0.0), 
+            0.0, 
+            Color::WHITE
+        );
     }
 }
