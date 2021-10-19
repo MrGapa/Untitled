@@ -2,6 +2,8 @@ use super::{
     raylib::prelude::*
 };
 
+pub trait AnimationData {}
+
 /**
  * General Struct for animation
  */
@@ -35,7 +37,6 @@ impl Animation {
     
     pub fn change_animation(&mut self, frame: f32, animation_idx: f32) {
         self.frame = frame;
-
-        self.rec.y = animation_idx * self.rec.height;   
+        self.rec.y = animation_idx * self.rec.height;
     }
 }
