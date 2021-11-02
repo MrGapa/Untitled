@@ -60,10 +60,19 @@ pub fn handle_player_inputs(rl: &RaylibHandle, player: &mut Player, character_sp
 }
 
 pub fn handle_enemy_inputs(enemy: &mut Enemy, character_speed: &mut f32, dt: &f32){
-    *character_speed += 1.0;
+    let movement;
 
-    let movement = Vector2::new(*character_speed * dt, 0.0);
+    if enemy.transform.get_position().x >= W_WIDTH as f32 {
+        *character_speed += 1.0;
 
-    enemy.transform.set_direction(1.0);
+        movement = Vector2::new(*character_speed * dt, 0.0);
+        enemy.transform.set_direction(1.0);
+    } else { 
+        *character_speed += -1.0;
+        
+        movement = Vector2::new(-*character_speed * dt, 0.0);
+        enemy.transform.set_direction(-1.0);
+    }
+
     enemy.transform.add_to_position(movement.scale_by(enemy.get_speed()));
 }

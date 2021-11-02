@@ -45,6 +45,9 @@ impl Player {
             
         };
 
+        p.animation.add_animation("IDLE", 0.0, 6.0);
+        p.animation.add_animation("RUN", 1.0, 8.0);
+
         p.update_animation(PlayerAnimations::IDLE);
 
         p
@@ -57,9 +60,9 @@ impl Player {
 
     pub fn update_animation(&mut self, p_anim: PlayerAnimations){
         match p_anim {
-            PlayerAnimations::IDLE => self.animation.change_animation(6.0, 0.0),
-            PlayerAnimations::RUN => self.animation.change_animation(8.0, 1.0),
-            _ => self.animation.change_animation(6.0, 0.0)
+            PlayerAnimations::IDLE => self.animation.change_animation("IDLE"),
+            PlayerAnimations::RUN => self.animation.change_animation("RUN"),
+            _ => self.animation.change_animation("IDLE")
         }
     }
 

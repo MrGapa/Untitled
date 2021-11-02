@@ -11,11 +11,15 @@ mod enemy;
 mod player;
 mod misc_funcs;
 mod character;
+mod game_manager;
+mod scene;
 
 use consts::*;
 use player::*;
 use input_handler::*;
 use enemy::*;
+use scene::Scene;
+use game_manager::GameManager;
 
 fn main() {
     let (mut rl, thread) = raylib::init()
@@ -25,9 +29,19 @@ fn main() {
     .build();
     
     let mut animation_time = 0.0;
-    let mut characters_speed: f32 = 0.0;
+    let mut player_speed: f32 = 0.0;
+    let mut enemy_speed: f32 = 0.0;
 
     rl.set_exit_key(Some(KeyboardKey::KEY_F10));
+
+    let mut manager = GameManager::new();
+
+    let ugo = Scene::new(
+        "INIT", 
+        rl.load_texture(&thread, "assets/UGO.png").expect("TEXTURE NOT FOUND")
+    );
+
+    manager.add_scene(ugo.get_name(), ugo);
     
     let mut player = Player::new(
         rl.load_texture(&thread, "assets/Player/Character_Sheet.png").expect("Couldn't Load Player Texture"),
@@ -51,40 +65,26 @@ fn main() {
 
     while !rl.window_should_close() {
 
-        let dt = rl.get_frame_time();
+        manager.update(&mut rl, &mut player);
 
-        animation_time += dt;
-
-        if animation_time >= UPDATE_TIME {
-            animation_time = 0.0;
-
-            player.animation.play_animation();
-            enemy.animation.play_animation();
-        }
-
-        handle_player_inputs(&rl, &mut player, &mut characters_speed, &dt);
-        handle_enemy_inputs(&mut enemy, &mut characters_speed, &dt);
+        // handle_player_inputs(&rl, &mut player, &mut player_speed, &dt);
+        // handle_enemy_inputs(&mut enemy, &mut enemy_speed, &dt);
 
         let mut d = rl.begin_drawing(&thread);
 
-        d.clear_background(Color::VIOLET);
+        d.clear_background(Color::RAYWHITE);
 
-        d.draw_texture_pro(
-            &player.sprite, 
-            Rectangle::new(player.animation.rec.x,player.animation.rec.y, player.transform.get_direction() * player.animation.rec.width, player.animation.rec.height), 
-            Rectangle::new(player.transform.get_position().x, player.transform.get_position().y,  player.transform.get_scale() * player.animation.rec.width, player.transform.get_scale() * player.animation.rec.height),
-            Vector2::new(0.0,0.0), 
-            0.0, 
-            Color::WHITE
-        );
+        manager.render(&mut d, &mut player);
 
-        d.draw_texture_pro(
-            &enemy.sprite, 
-            Rectangle::new(enemy.animation.rec.x, enemy.animation.rec.y, enemy.transform.get_direction() * enemy.animation.rec.width, enemy.animation.rec.height), 
-            Rectangle::new(enemy.transform.get_position().x, enemy.transform.get_position().y, enemy.transform.get_scale() * enemy.animation.rec.width, enemy.transform.get_scale() * enemy.animation.rec.height), 
-            Vector2::new(50.0,50.0),
-            0.0, 
-            Color::WHITE, 
-        );
+        // d.draw_texture_pro(
+        //     &enemy.sprite, 
+        //     Rectangle::new(enemy.animation.rec.x, enemy.animation.rec.y, enemy.transform.get_direction() * enemy.animation.rec.width, enemy.animation.rec.height), 
+        //     Rectangle::new(enemy.transform.get_position().x, enemy.transform.get_position().y, enemy.transform.get_scale() * enemy.animation.rec.width, enemy.transform.get_scale() * enemy.animation.rec.height), 
+        //     Vector2::new(50.0,50.0),
+        //     0.0, 
+        //     Color::WHITE, 
+        // );
+
+        
     }
 }
